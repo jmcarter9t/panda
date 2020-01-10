@@ -71,8 +71,11 @@ def copy_objs():
         assert (os.path.isfile(path)), "Missing file {} - did you run build.sh from panda/build directory?".format(path)
         shutil.copy(    plog,       os.path.join(lib_dir, softmmu, "plog_pb2.py"))
         shutil.copy(    path,       os.path.join(lib_dir, softmmu))
-        shutil.copy(    llvm1,      os.path.join(lib_dir, softmmu))
-        shutil.copy(    llvm2,      os.path.join(lib_dir, softmmu))
+        try:
+            shutil.copy(llvm1,      os.path.join(lib_dir, softmmu))
+            shutil.copy(llvm2,      os.path.join(lib_dir, softmmu))
+        except OSError:
+            print(f"\nWarning, no LLVM files present for {arch}. Taint analysis will fail\n")
 
         shutil.copytree(plugindir,  new_plugindir)
 
