@@ -17,7 +17,7 @@ make -j${NPROC}
 
 
 # Run test suite
-make -j${NPROC} check
+#make -j${NPROC} check
 
 # Install Pypanda for Bionic and newer
 cd /panda/panda/pypanda
