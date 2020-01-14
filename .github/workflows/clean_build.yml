@@ -19,12 +19,12 @@ jobs:
     steps:
     - name: Docker login
       run: docker login docker.pkg.github.com -u $GITHUB_ACTOR -p ${{secrets.GITHUB_TOKEN}}
-    - name: Build Bionic container
-      run:  cd ${GITHUB_WORKSPACE}/panda/docker && docker build . -f Dockerfile_18_04 -t bionic_test
-    - name: Build clean PANDA in bionic
-      run: docker run --rm -v bionic_test bash /panda/docker/update.sh ${GITHUB_SHA} clean
 
-    - name: Build Xenial container
-      run:  cd ${GITHUB_WORKSPACE}/panda/docker && docker build . -f Dockerfile_16_04 -t xenial_test
-    - name: Build clean PANDA in xenial
-      run: docker run --rm -v bionic_test bash /panda/docker/update.sh ${GITHUB_SHA} clean
+    - name: Fetch pre-built bionic docker container
+      run: docker pull docker.pkg.github.com/panda-re/panda/panda_bionic:latest
+
+    - name: Download docker/update.sh script from this commit
+      run: wget "https://raw.githubusercontent.com/panda-re/panda/${GITHUB_SHA}/panda/docker/update.sh"
+
+    - name: Inside container run update.sh to fetch this commit, make a *clean* build and run tests
+      run: docker run --rm -v $(pwd)/update.sh:/update.sh docker.pkg.github.com/panda-re/panda/panda_bionic bash /update.sh $GITHUB_SHA clean
