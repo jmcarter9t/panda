@@ -1957,16 +1957,20 @@ static void tcg_llvm_cleanup(void)
 
 void main_loop(void)
 {
+    // JMC: Panda stuff next 2 lines.
     bool nonblocking;
     int last_io = 0;
 #ifdef CONFIG_PROFILER
     int64_t ti;
 #endif
-    do {
+    do { 
+        // JMC: Panda stuff
         nonblocking = tcg_enabled() && last_io > 0;
 #ifdef CONFIG_PROFILER
         ti = profile_getclock();
 #endif
+
+        // JMC: All the way to CONFIG_PROFILER is panda.
         last_io = main_loop_wait(nonblocking);
         panda_callbacks_main_loop_wait();
 
@@ -1979,9 +1983,13 @@ void main_loop(void)
         sigaddset(&blockset, SIGUSR2);
         sigaddset(&blockset, SIGIO);
 
-	if (likely(rr_control.next == RR_NOCHANGE)) {
-	    // nop
-	} else if (unlikely(rr_control.next == RR_RECORD)) {
+        // JMC: Looks like setup based on EXPECTED record and replay next state.
+        // This is a little state machine that stops and starts record and replay
+        // based on how rr_control changes.
+
+        if (likely(rr_control.next == RR_NOCHANGE)) {
+            // nop
+        } else if (unlikely(rr_control.next == RR_RECORD)) {
             //block signals
             sigprocmask(SIG_BLOCK, &blockset, &oldset);
             rr_do_begin_record(rr_control.name, first_cpu);
@@ -2001,7 +2009,7 @@ void main_loop(void)
             //unblock signals
             sigprocmask(SIG_SETMASK, &oldset, NULL);
         } else if (unlikely((rr_control.next == RR_OFF) && rr_in_record())) {
-	    //mz 05.2012 We have the global mutex here, so this should be OK.
+            //mz 05.2012 We have the global mutex here, so this should be OK.
             rr_do_end_record();
             rr_reset_state(first_cpu);
             rr_control.next = RR_NOCHANGE;
@@ -3093,7 +3101,7 @@ void set_replay_name(char *name) {
 }
 
 int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
- {
+{
     if (pmm == PANDA_RUN)    goto PANDA_MAIN_RUN;
     if (pmm == PANDA_FINISH) goto PANDA_MAIN_FINISH;
     int i;
@@ -3154,6 +3162,7 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
     const char * panda_plugin_names[64] = {};
     int nb_panda_plugins = 0;
 
+	// JMC: these are QEMU modules being initialized.
     module_call_init(MODULE_INIT_TRACE);
 
     qemu_init_cpu_list();
@@ -4230,28 +4239,28 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
                 generate_llvm = 1;
                 break;
 #endif
-            case QEMU_OPTION_replay:
+            case QEMU_OPTION_replay:  // JMC: Panda
                 display_type = DT_NONE;
                 replay_name = optarg;
                 break;
-            case QEMU_OPTION_pandalog:
+            case QEMU_OPTION_pandalog:  // JMC: Panda
                 pandalog = 1;
                 pandalog_cc_init_write(optarg);
                 printf ("pandalogging to [%s]\n", optarg);
                 break;
-            case QEMU_OPTION_record_from:
+            case QEMU_OPTION_record_from:  // JMC: Panda
                 record_name = optarg;
                 break;
-            case QEMU_OPTION_panda_arg:
+            case QEMU_OPTION_panda_arg:  // JMC: Panda
                 // panda_add_arg() currently always return true
                 assert(panda_add_arg(NULL, optarg));
                 break;
-            case QEMU_OPTION_panda_plugin:
+            case QEMU_OPTION_panda_plugin:  // JMC: Panda
                 panda_plugin_files[nb_panda_plugins] = optarg;
                 panda_plugin_names[nb_panda_plugins] = NULL;
                 nb_panda_plugins++;
                 break;
-            case QEMU_OPTION_panda_plugins:
+            case QEMU_OPTION_panda_plugins:  // JMC: Parsing plugin CLI options
                 {
                     char *new_optarg = strdup(optarg);
                     char *plugin_start = new_optarg;
@@ -4301,7 +4310,7 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
                     free(new_optarg);
                     break;
                 }
-            case QEMU_OPTION_panda_os_name:
+            case QEMU_OPTION_panda_os_name:  // JMC: Panda
             {
                 char *os_name = strdup(optarg);
                 // NB: this will complain if we provide an os name that panda doesnt know about
@@ -4319,6 +4328,7 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
      */
     loc_set_none();
 
+    // JMC: Panda -- loading the plugins.
     // Now that all arguments are available, we can load plugins
     int pp_idx;
     for (pp_idx = 0; pp_idx < nb_panda_plugins; pp_idx++) {
@@ -4971,6 +4981,7 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
     qemu_system_reset(VMRESET_SILENT);
     register_global_state();
 
+    // JMC: Panda Stuff
     if (replay_name) {
         // rr: check for begin/end record/replay
         sigset_t blockset, oldset = {0};
@@ -5062,7 +5073,7 @@ PANDA_MAIN_RUN:
     
 
     panda_in_main_loop = 1;
-    main_loop();
+    main_loop(); // JMC: This is original to QEMU
     panda_in_main_loop = 0;
 
     if (pmm == PANDA_RUN) return 0;
@@ -5073,11 +5084,13 @@ PANDA_MAIN_FINISH:
         rr_do_end_record();
     }
 
+    // JMC: these two lines are original to QEMU
     replay_disable_events();
     iothread_stop_all();
 
     panda_cleanup();
 
+    // JMC: Original to QEMU
     pause_all_vcpus();
     bdrv_close_all();
     res_free();
@@ -5088,12 +5101,14 @@ PANDA_MAIN_FINISH:
     monitor_cleanup();
     qemu_chr_cleanup();
 
+    // JMC: Panda
 #ifdef CONFIG_LLVM
     if (generate_llvm || execute_llvm){
         tcg_llvm_cleanup();
     }
 #endif
 
+    // JMC: Panda
     free((void*)qemu_file);
 
     return 0;

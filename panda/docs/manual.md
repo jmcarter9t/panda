@@ -427,8 +427,13 @@ end_record:
     be resumed and another recording can be made once the guest is
     resumed.
 
-A commandline flag `-record-from <snapshot>:<record-name>` to restores a
-qcow2 snapshot and immediately start recording is also provided for convenience.
+A commandline flag `-record-from <snapshot>:<record-name>` to restores a qcow2
+snapshot and immediately start recording is also provided for convenience. 
+
+A recording can be made from boot using this flag. Use a previously unused
+<snapshot> string. The snapshot will be placed in the same directory as the
+recording (if a directory is on its path) using the same prefix as the
+recording.
 
 Start replays from the command line using the `-replay <name>` option.
 

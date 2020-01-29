@@ -199,6 +199,7 @@ static void set_idt(int n, unsigned int dpl)
 }
 #endif
 
+// JMC: Get the next translation block and execute it. Deal with any CPU exceptions that occur as a result.
 void cpu_loop(CPUX86State *env)
 {
     CPUState *cs = CPU(x86_env_get_cpu(env));
@@ -209,10 +210,12 @@ void cpu_loop(CPUX86State *env)
 
     for(;;) {
         cpu_exec_start(cs);
+        // JMC: This call will execute a Translation Block after finding the next one.
         trapnr = cpu_exec(cs);
         cpu_exec_end(cs);
         process_queued_cpu_work(cs);
 
+        // JMC: The cpu_exec function may return a cpu exception code.
         switch(trapnr) {
         case 0x80:
             /* linux syscall from int $0x80 */
