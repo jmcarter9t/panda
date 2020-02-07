@@ -1547,6 +1547,7 @@ void cpu_remove_sync(CPUState *cpu)
 /* For temporary buffers for forming a name */
 #define VCPU_THREAD_NAME_SIZE 16
 
+// JMC: could be multi-cpu machines. Each different CPU will SHARE A SINGLE CPU THREAD.
 static void qemu_tcg_init_vcpu(CPUState *cpu)
 {
     char thread_name[VCPU_THREAD_NAME_SIZE];
@@ -1555,6 +1556,7 @@ static void qemu_tcg_init_vcpu(CPUState *cpu)
 
     /* share a single thread for all cpus with TCG */
     if (!tcg_cpu_thread) {
+        // JMC: CPU thread not created, so create it.
         cpu->thread = g_malloc0(sizeof(QemuThread));
         cpu->halt_cond = g_malloc0(sizeof(QemuCond));
         qemu_cond_init(cpu->halt_cond);
@@ -1628,6 +1630,7 @@ static void qemu_dummy_start_vcpu(CPUState *cpu)
     }
 }
 
+// JMC: This launches virtual cpus based on various types.
 void qemu_init_vcpu(CPUState *cpu)
 {
     cpu->nr_cores = smp_cores;
@@ -1649,6 +1652,7 @@ void qemu_init_vcpu(CPUState *cpu)
     } else if (hax_enabled()) {
         qemu_hax_start_vcpu(cpu);
     } else if (tcg_enabled()) {
+        // JMC: starts or assigns existing cpu thread.
         qemu_tcg_init_vcpu(cpu);
     } else {
         qemu_dummy_start_vcpu(cpu);

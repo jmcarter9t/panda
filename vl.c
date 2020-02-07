@@ -1970,7 +1970,7 @@ void main_loop(void)
         ti = profile_getclock();
 #endif
 
-        // JMC: All the way to CONFIG_PROFILER is panda.
+        // JMC: main_loop_wait is original.
         last_io = main_loop_wait(nonblocking);
         panda_callbacks_main_loop_wait();
 
@@ -3176,6 +3176,8 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
     module_call_init(MODULE_INIT_QOM);
     monitor_init_qmp_commands();
 
+    // JMC: think this just adds these options to the possible parse list (those options that could be specified on the
+    // CLI).
     qemu_add_opts(&qemu_drive_opts);
     qemu_add_drive_opts(&qemu_legacy_drive_opts);
     qemu_add_drive_opts(&qemu_common_drive_opts);
@@ -4384,13 +4386,13 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
     }
 #endif
 
-    current_machine = MACHINE(object_new(object_class_get_name(
-                          OBJECT_CLASS(machine_class))));
+    current_machine = MACHINE(object_new(object_class_get_name( OBJECT_CLASS(machine_class))));
+
     if (machine_help_func(qemu_get_machine_opts(), current_machine)) {
         exit(0);
     }
-    object_property_add_child(object_get_root(), "machine",
-                              OBJECT(current_machine), &error_abort);
+
+    object_property_add_child(object_get_root(), "machine", OBJECT(current_machine), &error_abort);
 
     if (machine_class->minimum_page_bits) {
         if (!set_preferred_target_page_bits(machine_class->minimum_page_bits)) {
@@ -4467,6 +4469,7 @@ int main_aux(int argc, char **argv, char **envp, PandaMainMode pmm)
     smp_parse(qemu_opts_find(qemu_find_opts("smp-opts"), NULL));
 
     machine_class->max_cpus = machine_class->max_cpus ?: 1; /* Default to UP */
+
     if (max_cpus > machine_class->max_cpus) {
         error_report("Number of SMP CPUs requested (%d) exceeds max CPUs "
                      "supported by machine '%s' (%d)", max_cpus,

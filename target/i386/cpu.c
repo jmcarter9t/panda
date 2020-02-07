@@ -4033,8 +4033,11 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
 
     xcc->parent_realize = dc->realize;
     xcc->parent_unrealize = dc->unrealize;
+
+    // JMC: These function pointers appear to start virtual CPUs.
     dc->realize = x86_cpu_realizefn;
     dc->unrealize = x86_cpu_unrealizefn;
+
     dc->props = x86_cpu_properties;
 
     xcc->parent_reset = cc->reset;
@@ -4126,4 +4129,5 @@ static void x86_cpu_register_types(void)
 #endif
 }
 
+// JMC: this is a macro defined in /include/qemu/module.h -- it is a surrogate for module_init( fn, MODULE_INIT_QOM )
 type_init(x86_cpu_register_types)
