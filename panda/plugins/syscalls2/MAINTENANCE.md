@@ -16,7 +16,15 @@ The files used to generate the prototype files are in the `scripts` folder:
 
 - `make_all_prototypes.sh` - calls `prototype_parser.py` for each target
 - `prototype_parser.py` - uses the `prototype_parser_config.py` to create the desired prototype file
+    - use the `--help` to see the options; it will automatically list new targets that are populated in the
+      `prototype_parser_config.py` script.
 - `prototype_parser_config.py` - configuration information needed to generate each prototype
+    - A large dictionary (map) called `CONFIG` that maps targets to information needed to find and parse those targets.
+    - The value of each target is another dictionary.  Details inside that dictionary:
+        - `src` base directory of your kernel source directory.
+        - `map_function_signature` : parser, locations, and regex to find system call signatures.
+        - `map_function_number` : parser, source, and regex to find system call numbers.
+        - `map_name_number` : parser, source, and ??? [not sure about this one yet]
 
 Also, a configuration in `prototype_parser_config.py` may refer to additional signature information specified in files in the `generated-in` folder.
 

@@ -25,8 +25,10 @@ static inline uint32_t regime_el(CPUARMState *env, ARMMMUIdx mmu_idx)
     case ARMMMUIdx_S1NSE0:
     case ARMMMUIdx_S1NSE1:
     case ARMMMUIdx_S12NSE1:
+    case ARMMMUIdx_S12NSE0:  // JMC: this case was not handled and guessing it can be handled the same as the previous.
         return 1;
     default:
+        printf("Unimplemented code for MMU_IDX: %d\n", mmu_idx );
         g_assert_not_reached();
     }
 }
