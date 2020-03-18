@@ -1,52 +1,7 @@
-/*!
- * @file syscalls_ext_typedefs.h
- * @brief Definitions of types for syscalls2 callbacks.
- */
-#pragma once
-#include "panda/types.h"
-#include "../syscalls2_info.h"
-
-/* Functions used to populate syscall_ctx_t structs. */
-target_long get_return_val(CPUState *env);
-target_ptr_t mask_retaddr_to_pc(target_ptr_t retaddr);
-target_ptr_t calc_retaddr(CPUState *env, target_ptr_t pc);
-uint32_t get_32(CPUState *env, uint32_t argnum);
-int32_t get_s32(CPUState *env, uint32_t argnum);
-uint64_t get_64(CPUState *env, uint32_t argnum);
-int64_t get_s64(CPUState *env, uint32_t argnum);
-target_ptr_t get_pointer(CPUState *env, uint32_t argnum);
-uint32_t get_return_32(CPUState *env, uint32_t argnum);
-int32_t get_return_s32(CPUState *env, uint32_t argnum);
-uint64_t get_return_64(CPUState *env, uint32_t argnum);
-int64_t get_return_s64(CPUState *env, uint32_t argnum);
-target_ptr_t get_return_pointer(CPUState *env, uint32_t argnum);
-
-/**
- * @brief Maximum number of arguments for a system call across
- * all supported platforms.
- */
-#define GLOBAL_MAX_SYSCALL_ARGS 17
-
-/**
- * @brief Maximum size for a syscall argument across all supported platforms.
- */
-#define GLOBAL_MAX_SYSCALL_ARG_SIZE sizeof(uint64_t)
-
-/**
- * @brief Holds information about an ongoing system calls. This is
- * needed in order to be able to make the system call arguments
- * available to the return callback.
- */
-struct syscall_ctx {
-    int no;               /**< number */
-    target_ptr_t asid;    /**< calling process asid */
-    target_ptr_t retaddr; /**< return address */
-    uint8_t args[GLOBAL_MAX_SYSCALL_ARGS]
-                [GLOBAL_MAX_SYSCALL_ARG_SIZE]; /**< arguments */
-};
-typedef struct syscall_ctx syscall_ctx_t;
-
-#if defined(TARGET_ARM)
+// BEGIN_PYPANDA_NEEDS_THIS -- do not delete this comment bc pypanda
+// api autogen needs it.  And don't put any compiler directives
+// between this and END_PYPANDA_NEEDS_THIS except includes of other
+// files in this directory that contain subsections like this one.
 typedef void (*on_ARM_breakpoint_enter_t)(CPUState* cpu, target_ulong pc);
 typedef void (*on_ARM_breakpoint_return_t)(CPUState* cpu, target_ulong pc);
 typedef void (*on_ARM_cacheflush_enter_t)(CPUState* cpu, target_ulong pc, uint32_t start, uint32_t end, uint32_t flags);
@@ -113,8 +68,6 @@ typedef void (*on_sys_close_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd
 typedef void (*on_sys_close_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd);
 typedef void (*on_sys_connect_enter_t)(CPUState* cpu, target_ulong pc, int32_t arg0, uint32_t arg1, int32_t arg2);
 typedef void (*on_sys_connect_return_t)(CPUState* cpu, target_ulong pc, int32_t arg0, uint32_t arg1, int32_t arg2);
-typedef void (*on_sys_copy_file_range_enter_t)(CPUState* cpu, target_ulong pc, int32_t fd_in, uint32_t off_in, int32_t fd_out, uint32_t off_out, uint32_t len, uint32_t flags);
-typedef void (*on_sys_copy_file_range_return_t)(CPUState* cpu, target_ulong pc, int32_t fd_in, uint32_t off_in, int32_t fd_out, uint32_t off_out, uint32_t len, uint32_t flags);
 typedef void (*on_sys_creat_enter_t)(CPUState* cpu, target_ulong pc, uint32_t pathname, uint32_t mode);
 typedef void (*on_sys_creat_return_t)(CPUState* cpu, target_ulong pc, uint32_t pathname, uint32_t mode);
 typedef void (*on_sys_delete_module_enter_t)(CPUState* cpu, target_ulong pc, uint32_t name_user, uint32_t flags);
@@ -311,8 +264,8 @@ typedef void (*on_sys_kexec_load_enter_t)(CPUState* cpu, target_ulong pc, uint32
 typedef void (*on_sys_kexec_load_return_t)(CPUState* cpu, target_ulong pc, uint32_t entry, uint32_t nr_segments, uint32_t segments, uint32_t flags);
 typedef void (*on_sys_keyctl_enter_t)(CPUState* cpu, target_ulong pc, int32_t cmd, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5);
 typedef void (*on_sys_keyctl_return_t)(CPUState* cpu, target_ulong pc, int32_t cmd, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5);
-typedef void (*on_sys_kill_enter_t)(CPUState* cpu, target_ulong pc, uint32_t pid, int32_t sig);
-typedef void (*on_sys_kill_return_t)(CPUState* cpu, target_ulong pc, uint32_t pid, int32_t sig);
+typedef void (*on_sys_kill_enter_t)(CPUState* cpu, target_ulong pc, int32_t pid, int32_t sig);
+typedef void (*on_sys_kill_return_t)(CPUState* cpu, target_ulong pc, int32_t pid, int32_t sig);
 typedef void (*on_sys_lchown_enter_t)(CPUState* cpu, target_ulong pc, uint32_t filename, uint32_t user, uint32_t group);
 typedef void (*on_sys_lchown_return_t)(CPUState* cpu, target_ulong pc, uint32_t filename, uint32_t user, uint32_t group);
 typedef void (*on_sys_lchown16_enter_t)(CPUState* cpu, target_ulong pc, uint32_t filename, uint32_t user, uint32_t group);
@@ -439,12 +392,6 @@ typedef void (*on_sys_pipe2_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fi
 typedef void (*on_sys_pipe2_return_t)(CPUState* cpu, target_ulong pc, uint32_t fildes, int32_t flags);
 typedef void (*on_sys_pivot_root_enter_t)(CPUState* cpu, target_ulong pc, uint32_t new_root, uint32_t put_old);
 typedef void (*on_sys_pivot_root_return_t)(CPUState* cpu, target_ulong pc, uint32_t new_root, uint32_t put_old);
-typedef void (*on_sys_pkey_alloc_enter_t)(CPUState* cpu, target_ulong pc, uint32_t flags, uint32_t init_val);
-typedef void (*on_sys_pkey_alloc_return_t)(CPUState* cpu, target_ulong pc, uint32_t flags, uint32_t init_val);
-typedef void (*on_sys_pkey_free_enter_t)(CPUState* cpu, target_ulong pc, int32_t pkey);
-typedef void (*on_sys_pkey_free_return_t)(CPUState* cpu, target_ulong pc, int32_t pkey);
-typedef void (*on_sys_pkey_mprotect_enter_t)(CPUState* cpu, target_ulong pc, uint32_t start, uint32_t len, uint32_t prot, int32_t pkey);
-typedef void (*on_sys_pkey_mprotect_return_t)(CPUState* cpu, target_ulong pc, uint32_t start, uint32_t len, uint32_t prot, int32_t pkey);
 typedef void (*on_sys_poll_enter_t)(CPUState* cpu, target_ulong pc, uint32_t ufds, uint32_t nfds, int32_t timeout);
 typedef void (*on_sys_poll_return_t)(CPUState* cpu, target_ulong pc, uint32_t ufds, uint32_t nfds, int32_t timeout);
 typedef void (*on_sys_ppoll_enter_t)(CPUState* cpu, target_ulong pc, uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4);
@@ -455,8 +402,6 @@ typedef void (*on_sys_pread64_enter_t)(CPUState* cpu, target_ulong pc, uint32_t 
 typedef void (*on_sys_pread64_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t buf, uint32_t count, uint64_t pos);
 typedef void (*on_sys_preadv_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h);
 typedef void (*on_sys_preadv_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h);
-typedef void (*on_sys_preadv2_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h, int32_t flags);
-typedef void (*on_sys_preadv2_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h, int32_t flags);
 typedef void (*on_sys_prlimit64_enter_t)(CPUState* cpu, target_ulong pc, uint32_t pid, uint32_t resource, uint32_t new_rlim, uint32_t old_rlim);
 typedef void (*on_sys_prlimit64_return_t)(CPUState* cpu, target_ulong pc, uint32_t pid, uint32_t resource, uint32_t new_rlim, uint32_t old_rlim);
 typedef void (*on_sys_process_vm_readv_enter_t)(CPUState* cpu, target_ulong pc, uint32_t pid, uint32_t lvec, uint32_t liovcnt, uint32_t rvec, uint32_t riovcnt, uint32_t flags);
@@ -471,8 +416,6 @@ typedef void (*on_sys_pwrite64_enter_t)(CPUState* cpu, target_ulong pc, uint32_t
 typedef void (*on_sys_pwrite64_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t buf, uint32_t count, uint64_t pos);
 typedef void (*on_sys_pwritev_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h);
 typedef void (*on_sys_pwritev_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h);
-typedef void (*on_sys_pwritev2_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h, int32_t flags);
-typedef void (*on_sys_pwritev2_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen, uint32_t pos_l, uint32_t pos_h, int32_t flags);
 typedef void (*on_sys_quotactl_enter_t)(CPUState* cpu, target_ulong pc, uint32_t cmd, uint32_t special, uint32_t id, uint32_t addr);
 typedef void (*on_sys_quotactl_return_t)(CPUState* cpu, target_ulong pc, uint32_t cmd, uint32_t special, uint32_t id, uint32_t addr);
 typedef void (*on_sys_read_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t buf, uint32_t count);
@@ -517,8 +460,8 @@ typedef void (*on_sys_rt_sigpending_enter_t)(CPUState* cpu, target_ulong pc, uin
 typedef void (*on_sys_rt_sigpending_return_t)(CPUState* cpu, target_ulong pc, uint32_t set, uint32_t sigsetsize);
 typedef void (*on_sys_rt_sigprocmask_enter_t)(CPUState* cpu, target_ulong pc, int32_t how, uint32_t set, uint32_t oset, uint32_t sigsetsize);
 typedef void (*on_sys_rt_sigprocmask_return_t)(CPUState* cpu, target_ulong pc, int32_t how, uint32_t set, uint32_t oset, uint32_t sigsetsize);
-typedef void (*on_sys_rt_sigqueueinfo_enter_t)(CPUState* cpu, target_ulong pc, uint32_t pid, int32_t sig, uint32_t uinfo);
-typedef void (*on_sys_rt_sigqueueinfo_return_t)(CPUState* cpu, target_ulong pc, uint32_t pid, int32_t sig, uint32_t uinfo);
+typedef void (*on_sys_rt_sigqueueinfo_enter_t)(CPUState* cpu, target_ulong pc, int32_t pid, int32_t sig, uint32_t uinfo);
+typedef void (*on_sys_rt_sigqueueinfo_return_t)(CPUState* cpu, target_ulong pc, int32_t pid, int32_t sig, uint32_t uinfo);
 typedef void (*on_sys_rt_sigreturn_enter_t)(CPUState* cpu, target_ulong pc, uint32_t regs);
 typedef void (*on_sys_rt_sigreturn_return_t)(CPUState* cpu, target_ulong pc, uint32_t regs);
 typedef void (*on_sys_rt_sigsuspend_enter_t)(CPUState* cpu, target_ulong pc, uint32_t unewset, uint32_t sigsetsize);
@@ -705,8 +648,8 @@ typedef void (*on_sys_syslog_enter_t)(CPUState* cpu, target_ulong pc, int32_t ty
 typedef void (*on_sys_syslog_return_t)(CPUState* cpu, target_ulong pc, int32_t type, uint32_t buf, int32_t len);
 typedef void (*on_sys_tee_enter_t)(CPUState* cpu, target_ulong pc, int32_t fdin, int32_t fdout, uint32_t len, uint32_t flags);
 typedef void (*on_sys_tee_return_t)(CPUState* cpu, target_ulong pc, int32_t fdin, int32_t fdout, uint32_t len, uint32_t flags);
-typedef void (*on_sys_tgkill_enter_t)(CPUState* cpu, target_ulong pc, uint32_t tgid, uint32_t pid, int32_t sig);
-typedef void (*on_sys_tgkill_return_t)(CPUState* cpu, target_ulong pc, uint32_t tgid, uint32_t pid, int32_t sig);
+typedef void (*on_sys_tgkill_enter_t)(CPUState* cpu, target_ulong pc, int32_t tgid, int32_t pid, int32_t sig);
+typedef void (*on_sys_tgkill_return_t)(CPUState* cpu, target_ulong pc, int32_t tgid, int32_t pid, int32_t sig);
 typedef void (*on_sys_time_enter_t)(CPUState* cpu, target_ulong pc, uint32_t tloc);
 typedef void (*on_sys_time_return_t)(CPUState* cpu, target_ulong pc, uint32_t tloc);
 typedef void (*on_sys_timer_create_enter_t)(CPUState* cpu, target_ulong pc, uint32_t which_clock, uint32_t timer_event_spec, uint32_t created_timer_id);
@@ -727,8 +670,8 @@ typedef void (*on_sys_timerfd_settime_enter_t)(CPUState* cpu, target_ulong pc, i
 typedef void (*on_sys_timerfd_settime_return_t)(CPUState* cpu, target_ulong pc, int32_t ufd, int32_t flags, uint32_t utmr, uint32_t otmr);
 typedef void (*on_sys_times_enter_t)(CPUState* cpu, target_ulong pc, uint32_t tbuf);
 typedef void (*on_sys_times_return_t)(CPUState* cpu, target_ulong pc, uint32_t tbuf);
-typedef void (*on_sys_tkill_enter_t)(CPUState* cpu, target_ulong pc, uint32_t pid, int32_t sig);
-typedef void (*on_sys_tkill_return_t)(CPUState* cpu, target_ulong pc, uint32_t pid, int32_t sig);
+typedef void (*on_sys_tkill_enter_t)(CPUState* cpu, target_ulong pc, int32_t pid, int32_t sig);
+typedef void (*on_sys_tkill_return_t)(CPUState* cpu, target_ulong pc, int32_t pid, int32_t sig);
 typedef void (*on_sys_truncate_enter_t)(CPUState* cpu, target_ulong pc, uint32_t path, int32_t length);
 typedef void (*on_sys_truncate_return_t)(CPUState* cpu, target_ulong pc, uint32_t path, int32_t length);
 typedef void (*on_sys_truncate64_enter_t)(CPUState* cpu, target_ulong pc, uint32_t path, uint64_t length);
@@ -769,25 +712,5 @@ typedef void (*on_sys_write_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd
 typedef void (*on_sys_write_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t buf, uint32_t count);
 typedef void (*on_sys_writev_enter_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen);
 typedef void (*on_sys_writev_return_t)(CPUState* cpu, target_ulong pc, uint32_t fd, uint32_t vec, uint32_t vlen);
-#endif
-#if defined(TARGET_X86_64)
-#include "syscalls_ext_typedefs_x64.h"
-#endif
-#if defined(TARGET_I386) && !defined(TARGET_X86_64)
-#include "syscalls_ext_typedefs_x86.h"
-#endif
 
-// WIP - How can we expose these to pypanda given that they need syscall_ctx which dependes on #DEFINES
-// BEGIN_PYPANDA_NEEDS_THIS -- do not delete this comment bc pypanda
-// api autogen needs it.  And don't put any compiler directives
-// between this and END_PYPANDA_NEEDS_THIS except includes of other
-// files in this directory that contain subsections like this one.
-typedef void (*on_all_sys_enter_t)(CPUState *cpu, target_ulong pc, target_ulong callno);
-typedef void (*on_all_sys_enter2_t)(CPUState *cpu, target_ulong pc, const syscall_info_t *call, const syscall_ctx_t *ctx);
-typedef void (*on_all_sys_return_t)(CPUState *cpu, target_ulong pc, target_ulong callno);
-typedef void (*on_all_sys_return2_t)(CPUState *cpu, target_ulong pc, const syscall_info_t *call, const syscall_ctx_t *ctx);
-typedef void (*on_unknown_sys_enter_t)(CPUState *cpu, target_ulong pc, target_ulong callno);
-typedef void (*on_unknown_sys_return_t)(CPUState *cpu, target_ulong pc, target_ulong callno);
 // END_PYPANDA_NEEDS_THIS -- do not delete this comment!
-
-/* vim: set tabstop=4 softtabstop=4 noexpandtab ft=cpp: */

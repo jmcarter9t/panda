@@ -29,6 +29,7 @@ static inline uint32_t regime_el(CPUARMState *env, ARMMMUIdx mmu_idx)
         return 1;
     default:
         printf("Unimplemented code for MMU_IDX: %d\n", mmu_idx );
+        printf("Unimplemented code for MMU_IDX: %d\n", mmu_idx);
         g_assert_not_reached();
     }
 }
@@ -63,6 +64,14 @@ bool arm_get_vaddr_table(CPUState *cpu, uint32_t *table, uint32_t address)
 {
     CPUARMState *env = (CPUARMState *)cpu->env_ptr;
     ARMMMUIdx mmu_idx = cpu_mmu_index(env, false);
+
+    /* For EL0 and EL1, TBI is controlled by stage 1's TCR, so convert
+       * a stage 1+2 mmu index into the appropriate stage 1 mmu index.
+       */
+    if (mmu_idx == ARMMMUIdx_S12NSE0 || mmu_idx == ARMMMUIdx_S12NSE1) {
+        mmu_idx += ARMMMUIdx_S1NSE0;
+    }
+
     /* Note that we can only get here for an AArch32 PL0/PL1 lookup */
     TCR *tcr = regime_tcr(env, mmu_idx);
 
