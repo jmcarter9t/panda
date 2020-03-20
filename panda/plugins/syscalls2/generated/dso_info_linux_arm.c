@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "../syscalls2_info.h"
 #define MAX_SYSCALL_NO 983045
-#define MAX_SYSCALL_GENERIC_NO 390
+#define MAX_SYSCALL_GENERIC_NO 396
 #define MAX_SYSCALL_ARGS 6
 
 #if __GNUC__ < 5
@@ -76,8 +76,8 @@ static syscall_argtype_t argt_34[] = {SYSCALL_ARG_S32};
 static uint8_t argsz_34[] = {sizeof(int32_t)};
 static syscall_argtype_t argt_36[] = {};
 static uint8_t argsz_36[] = {};
-static syscall_argtype_t argt_37[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32};
-static uint8_t argsz_37[] = {sizeof(int32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_37[] = {SYSCALL_ARG_U32, SYSCALL_ARG_S32};
+static uint8_t argsz_37[] = {sizeof(uint32_t), sizeof(int32_t)};
 static syscall_argtype_t argt_38[] = {SYSCALL_ARG_STR, SYSCALL_ARG_STR};
 static uint8_t argsz_38[] = {sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_39[] = {SYSCALL_ARG_STR, SYSCALL_ARG_U32};
@@ -306,8 +306,8 @@ static syscall_argtype_t argt_176[] = {SYSCALL_ARG_PTR, SYSCALL_ARG_U32};
 static uint8_t argsz_176[] = {sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_177[] = {SYSCALL_ARG_PTR, SYSCALL_ARG_PTR, SYSCALL_ARG_PTR, SYSCALL_ARG_U32};
 static uint8_t argsz_177[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t)};
-static syscall_argtype_t argt_178[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_PTR};
-static uint8_t argsz_178[] = {sizeof(int32_t), sizeof(int32_t), sizeof(uint32_t)};
+static syscall_argtype_t argt_178[] = {SYSCALL_ARG_U32, SYSCALL_ARG_S32, SYSCALL_ARG_PTR};
+static uint8_t argsz_178[] = {sizeof(uint32_t), sizeof(int32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_179[] = {SYSCALL_ARG_PTR, SYSCALL_ARG_U32};
 static uint8_t argsz_179[] = {sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_180[] = {SYSCALL_ARG_U32, SYSCALL_ARG_PTR, SYSCALL_ARG_U32, SYSCALL_ARG_U64};
@@ -418,8 +418,8 @@ static syscall_argtype_t argt_236[] = {SYSCALL_ARG_STR, SYSCALL_ARG_STR};
 static uint8_t argsz_236[] = {sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_237[] = {SYSCALL_ARG_S32, SYSCALL_ARG_STR};
 static uint8_t argsz_237[] = {sizeof(int32_t), sizeof(uint32_t)};
-static syscall_argtype_t argt_238[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32};
-static uint8_t argsz_238[] = {sizeof(int32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_238[] = {SYSCALL_ARG_U32, SYSCALL_ARG_S32};
+static uint8_t argsz_238[] = {sizeof(uint32_t), sizeof(int32_t)};
 static syscall_argtype_t argt_239[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_PTR, SYSCALL_ARG_U32};
 static uint8_t argsz_239[] = {sizeof(int32_t), sizeof(int32_t), sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_240[] = {SYSCALL_ARG_PTR, SYSCALL_ARG_S32, SYSCALL_ARG_U32, SYSCALL_ARG_PTR, SYSCALL_ARG_PTR, SYSCALL_ARG_U32};
@@ -474,8 +474,8 @@ static syscall_argtype_t argt_266[] = {SYSCALL_ARG_STR, SYSCALL_ARG_U32, SYSCALL
 static uint8_t argsz_266[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_267[] = {SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_PTR};
 static uint8_t argsz_267[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t)};
-static syscall_argtype_t argt_268[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_S32};
-static uint8_t argsz_268[] = {sizeof(int32_t), sizeof(int32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_268[] = {SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_S32};
+static uint8_t argsz_268[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(int32_t)};
 static syscall_argtype_t argt_269[] = {SYSCALL_ARG_STR, SYSCALL_ARG_PTR};
 static uint8_t argsz_269[] = {sizeof(uint32_t), sizeof(uint32_t)};
 static syscall_argtype_t argt_270[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_U64, SYSCALL_ARG_U64};
@@ -718,6 +718,18 @@ static syscall_argtype_t argt_389[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32};
 static uint8_t argsz_389[] = {sizeof(int32_t), sizeof(int32_t)};
 static syscall_argtype_t argt_390[] = {SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_S32};
 static uint8_t argsz_390[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_391[] = {SYSCALL_ARG_S32, SYSCALL_ARG_PTR, SYSCALL_ARG_S32, SYSCALL_ARG_PTR, SYSCALL_ARG_U32, SYSCALL_ARG_U32};
+static uint8_t argsz_391[] = {sizeof(int32_t), sizeof(uint32_t), sizeof(int32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t)};
+static syscall_argtype_t argt_392[] = {SYSCALL_ARG_U32, SYSCALL_ARG_PTR, SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_S32};
+static uint8_t argsz_392[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_393[] = {SYSCALL_ARG_U32, SYSCALL_ARG_PTR, SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_S32};
+static uint8_t argsz_393[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_394[] = {SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_U32, SYSCALL_ARG_S32};
+static uint8_t argsz_394[] = {sizeof(uint32_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(int32_t)};
+static syscall_argtype_t argt_395[] = {SYSCALL_ARG_U32, SYSCALL_ARG_U32};
+static uint8_t argsz_395[] = {sizeof(uint32_t), sizeof(uint32_t)};
+static syscall_argtype_t argt_396[] = {SYSCALL_ARG_S32};
+static uint8_t argsz_396[] = {sizeof(int32_t)};
 /* skipping non generic system call 983041 (ARM_breakpoint) */
 /* skipping non generic system call 983042 (ARM_cacheflush) */
 /* skipping non generic system call 983043 (ARM_user26_mode) */
@@ -3525,6 +3537,54 @@ syscall_info_t __syscall_info_a[] = {
 		.nargs = 3,
 		.argt = argt_390,
 		.argsz = argsz_390,
+		.noreturn = false
+	},
+	[391] = {
+		.no = 391,
+		.name = "sys_copy_file_range",
+		.nargs = 6,
+		.argt = argt_391,
+		.argsz = argsz_391,
+		.noreturn = false
+	},
+	[392] = {
+		.no = 392,
+		.name = "sys_preadv2",
+		.nargs = 6,
+		.argt = argt_392,
+		.argsz = argsz_392,
+		.noreturn = false
+	},
+	[393] = {
+		.no = 393,
+		.name = "sys_pwritev2",
+		.nargs = 6,
+		.argt = argt_393,
+		.argsz = argsz_393,
+		.noreturn = false
+	},
+	[394] = {
+		.no = 394,
+		.name = "sys_pkey_mprotect",
+		.nargs = 4,
+		.argt = argt_394,
+		.argsz = argsz_394,
+		.noreturn = false
+	},
+	[395] = {
+		.no = 395,
+		.name = "sys_pkey_alloc",
+		.nargs = 2,
+		.argt = argt_395,
+		.argsz = argsz_395,
+		.noreturn = false
+	},
+	[396] = {
+		.no = 396,
+		.name = "sys_pkey_free",
+		.nargs = 1,
+		.argt = argt_396,
+		.argsz = argsz_396,
 		.noreturn = false
 	},
 	/* skipping non generic system call 983041 (ARM_breakpoint) */

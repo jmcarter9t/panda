@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 #!/usr/bin/env python2.7
+
 # /* PANDABEGINCOMMENT
 # *
 # * Authors:
@@ -250,7 +253,9 @@ class Argument(object):
             runtime value to it.
         '''
         ctype = self.ctype
-        ctype_bits = int(filter(str.isdigit, ctype))
+        s = re.search(r'\d+', ctype ) 
+        ctype_bits = int(s.group(0)) if s else 0
+        # ctype_bits = int(filter(str.isdigit, ctype))
         assert ctype_bits in [32, 64], 'Invalid number of bits for type %s' % ctype
         ctype_get = 'get_%d' % ctype_bits if ctype.startswith('uint') else 'get_s%d' % ctype_bits
         return '{0} arg{1} = {2}(cpu, {1});'.format(ctype, self.no, ctype_get)
@@ -446,25 +451,29 @@ if __name__ == '__main__':
         j2tpl = j2env.get_template('syscall_switch_enter.tpl')
         with open(os.path.join(args.outdir, "%ssyscall_switch_enter_%s_%s.cpp" % (args.prefix, _os, _arch)), "wb+") as of:
             logging.info("Writing %s", of.name)
-            of.write(j2tpl.render(target_context))
+            # of.write(j2tpl.render(target_context))
+            of.write(bytearray(j2tpl.render(target_context), "utf8"))
         j2tpl = j2env.get_template('syscall_switch_return.tpl')
         with open(os.path.join(args.outdir, "%ssyscall_switch_return_%s_%s.cpp" % (args.prefix, _os, _arch)), "wb+") as of:
             logging.info("Writing %s", of.name)
-            of.write(j2tpl.render(target_context))
+            # of.write(j2tpl.render(target_context))
+            of.write(bytearray(j2tpl.render(target_context), "utf8"))
 
         # Generate syscall info dynamic libraries.
         if args.generate_info:
             j2tpl = j2env.get_template('syscalls_info.tpl')
             with open(os.path.join(args.outdir, "%sdso_info_%s_%s.c" % (args.prefix, _os, _arch)), "wb+") as of:
                 logging.info("Writing %s", of.name)
-                of.write(j2tpl.render(target_context))
+                # of.write(j2tpl.render(target_context))
+                of.write(bytearray(j2tpl.render(target_context),"utf8"))
 
         # Make syscalls_ext_typedefs_[arch] files
         j2tpl = j2env.get_template('syscalls_ext_typedefs_arch.tpl')
         of_name = '%s%s' % (args.prefix, 'syscalls_ext_typedefs_' + _arch + '.h')
         with open(os.path.join(args.outdir, of_name), 'wb+') as of:
             logging.info("Writing %s", of.name)
-            of.write(j2tpl.render(syscalls=syscalls_arch))
+            # of.write(j2tpl.render(syscalls=syscalls_arch))
+            of.write(bytearray(j2tpl.render(syscalls=syscalls_arch), "utf8"))
 
     # Render big files.
     for tpl, ext in GENERATED_FILES:
@@ -472,6 +481,7 @@ if __name__ == '__main__':
         of_name = '%s%s%s' % (args.prefix, os.path.splitext(os.path.basename(tpl))[0], ext)
         with open(os.path.join(args.outdir, of_name), 'wb+') as of:
             logging.info("Writing %s", of.name)
-            of.write(j2tpl.render(global_context))
+            # of.write(j2tpl.render(global_context))
+            of.write(bytearray(j2tpl.render(global_context),"utf8"))
 
 # vim: set tabstop=4 softtabstop=4 expandtab :

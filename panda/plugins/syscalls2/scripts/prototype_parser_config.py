@@ -76,33 +76,33 @@ CONFIG_LINUX = {
             'source': 'arch/x86/entry/syscalls/syscall_32.tbl',
         },
     },
-    'linux:arm:ubuntu': {
-        'bits': 32,
-        'src': os.path.expanduser('~/git/ubuntu-xenial'),
-        'extrasigs': 'linux_arm_extrasigs.json',
-        'map_function_signature': {
-            'parser': 'parse_signature_files',
-            'locations': {
-                'include/linux/syscalls.h': r'asmlinkage (?P<signature>\w+\s+(?P<syscall>\w+)\(.*)',
-                'arch/arm/kernel/signal.c': r'asmlinkage (?P<signature>\w+\s+(?P<syscall>\w+)\(.*)',
-            },
-            'normalize': True,
-        },
-        'map_function_number': {
-            'parser': 'parse_numbers_calltable',
-            'source': 'arch/arm/kernel/calls.S',
-            'regex': {
-                'callnr': r'^/\*\s*(?P<nr>\d+)\s*\*/',
-                'call': r'CALL\((?P<obsolete>OBSOLETE\()?(?P<abi>ABI\()?(?P<syscall>\w+)',
-            },
-            'syscalls_skip': ['sys_ni_syscall',],
-        },
-        'map_name_number': {
-            'parser': 'parse_numbers_unistd',
-            'source': 'arch/arm/include/uapi/asm/unistd.h',
-            'cpp_flags': ['-D__ARM_EABI__', '-D__KERNEL__',],
-        },
-    },
+#    'linux:arm:ubuntu': {
+#        'bits': 32,
+#        'src': os.path.expanduser('~/git/ubuntu-xenial'),
+#        'extrasigs': 'linux_arm_extrasigs.json',
+#        'map_function_signature': {
+#            'parser': 'parse_signature_files',
+#            'locations': {
+#                'include/linux/syscalls.h': r'asmlinkage (?P<signature>\w+\s+(?P<syscall>\w+)\(.*)',
+#                'arch/arm/kernel/signal.c': r'asmlinkage (?P<signature>\w+\s+(?P<syscall>\w+)\(.*)',
+#            },
+#            'normalize': True,
+#        },
+#        'map_function_number': {
+#            'parser': 'parse_numbers_calltable',
+#            'source': 'arch/arm/kernel/calls.S',
+#            'regex': {
+#                'callnr': r'^/\*\s*(?P<nr>\d+)\s*\*/',
+#                'call': r'CALL\((?P<obsolete>OBSOLETE\()?(?P<abi>ABI\()?(?P<syscall>\w+)',
+#            },
+#            'syscalls_skip': ['sys_ni_syscall',],
+#        },
+#        'map_name_number': {
+#            'parser': 'parse_numbers_unistd',
+#            'source': 'arch/arm/include/uapi/asm/unistd.h',
+#            'cpp_flags': ['-D__ARM_EABI__', '-D__KERNEL__',],
+#        },
+#    },
     'linux:arm:test': {
         'bits': 32,
         'src': os.path.expanduser('~/workspace/kernel-builds/src/linux-4.9.99'),

@@ -367,15 +367,15 @@ void syscall_enter_switch_linux_arm(CPUState *cpu, target_ptr_t pc) {
 		panda_noreturn = false;
 		PPP_RUN_CB(on_sys_sync_enter, cpu, pc);
 	}; break;
-	// 37 long sys_kill ['int pid', 'int sig']
+	// 37 long sys_kill ['pid_t pid', 'int sig']
 	case 37: {
 		panda_noreturn = false;
-		int32_t arg0 = get_s32(cpu, 0);
+		uint32_t arg0 = get_32(cpu, 0);
 		int32_t arg1 = get_s32(cpu, 1);
 		if (PPP_CHECK_CB(on_all_sys_enter2) ||
 			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
 					PPP_CHECK_CB(on_sys_kill_return)))) {
-			memcpy(ctx.args[0], &arg0, sizeof(int32_t));
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
 			memcpy(ctx.args[1], &arg1, sizeof(int32_t));
 		}
 		PPP_RUN_CB(on_sys_kill_enter, cpu, pc, arg0, arg1);
@@ -1838,16 +1838,16 @@ void syscall_enter_switch_linux_arm(CPUState *cpu, target_ptr_t pc) {
 		}
 		PPP_RUN_CB(on_sys_rt_sigtimedwait_enter, cpu, pc, arg0, arg1, arg2, arg3);
 	}; break;
-	// 178 long sys_rt_sigqueueinfo ['int pid', 'int sig', 'siginfo_t __user *uinfo']
+	// 178 long sys_rt_sigqueueinfo ['pid_t pid', 'int sig', 'siginfo_t __user *uinfo']
 	case 178: {
 		panda_noreturn = false;
-		int32_t arg0 = get_s32(cpu, 0);
+		uint32_t arg0 = get_32(cpu, 0);
 		int32_t arg1 = get_s32(cpu, 1);
 		uint32_t arg2 = get_32(cpu, 2);
 		if (PPP_CHECK_CB(on_all_sys_enter2) ||
 			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
 					PPP_CHECK_CB(on_sys_rt_sigqueueinfo_return)))) {
-			memcpy(ctx.args[0], &arg0, sizeof(int32_t));
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
 			memcpy(ctx.args[1], &arg1, sizeof(int32_t));
 			memcpy(ctx.args[2], &arg2, sizeof(uint32_t));
 		}
@@ -2594,15 +2594,15 @@ void syscall_enter_switch_linux_arm(CPUState *cpu, target_ptr_t pc) {
 		}
 		PPP_RUN_CB(on_sys_fremovexattr_enter, cpu, pc, arg0, arg1);
 	}; break;
-	// 238 long sys_tkill ['int pid', 'int sig']
+	// 238 long sys_tkill ['pid_t pid', 'int sig']
 	case 238: {
 		panda_noreturn = false;
-		int32_t arg0 = get_s32(cpu, 0);
+		uint32_t arg0 = get_32(cpu, 0);
 		int32_t arg1 = get_s32(cpu, 1);
 		if (PPP_CHECK_CB(on_all_sys_enter2) ||
 			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
 					PPP_CHECK_CB(on_sys_tkill_return)))) {
-			memcpy(ctx.args[0], &arg0, sizeof(int32_t));
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
 			memcpy(ctx.args[1], &arg1, sizeof(int32_t));
 		}
 		PPP_RUN_CB(on_sys_tkill_enter, cpu, pc, arg0, arg1);
@@ -3002,17 +3002,17 @@ void syscall_enter_switch_linux_arm(CPUState *cpu, target_ptr_t pc) {
 		}
 		PPP_RUN_CB(on_sys_fstatfs64_enter, cpu, pc, arg0, arg1, arg2);
 	}; break;
-	// 268 long sys_tgkill ['int tgid', 'int pid', 'int sig']
+	// 268 long sys_tgkill ['pid_t tgid', 'pid_t pid', 'int sig']
 	case 268: {
 		panda_noreturn = false;
-		int32_t arg0 = get_s32(cpu, 0);
-		int32_t arg1 = get_s32(cpu, 1);
+		uint32_t arg0 = get_32(cpu, 0);
+		uint32_t arg1 = get_32(cpu, 1);
 		int32_t arg2 = get_s32(cpu, 2);
 		if (PPP_CHECK_CB(on_all_sys_enter2) ||
 			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
 					PPP_CHECK_CB(on_sys_tgkill_return)))) {
-			memcpy(ctx.args[0], &arg0, sizeof(int32_t));
-			memcpy(ctx.args[1], &arg1, sizeof(int32_t));
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
+			memcpy(ctx.args[1], &arg1, sizeof(uint32_t));
 			memcpy(ctx.args[2], &arg2, sizeof(int32_t));
 		}
 		PPP_RUN_CB(on_sys_tgkill_enter, cpu, pc, arg0, arg1, arg2);
@@ -4955,6 +4955,110 @@ void syscall_enter_switch_linux_arm(CPUState *cpu, target_ptr_t pc) {
 			memcpy(ctx.args[2], &arg2, sizeof(int32_t));
 		}
 		PPP_RUN_CB(on_sys_mlock2_enter, cpu, pc, arg0, arg1, arg2);
+	}; break;
+	// 391 long sys_copy_file_range ['int fd_in', 'loff_t __user *off_in', 'int fd_out', 'loff_t __user *off_out', 'size_t len', 'unsigned int flags']
+	case 391: {
+		panda_noreturn = false;
+		int32_t arg0 = get_s32(cpu, 0);
+		uint32_t arg1 = get_32(cpu, 1);
+		int32_t arg2 = get_s32(cpu, 2);
+		uint32_t arg3 = get_32(cpu, 3);
+		uint32_t arg4 = get_32(cpu, 4);
+		uint32_t arg5 = get_32(cpu, 5);
+		if (PPP_CHECK_CB(on_all_sys_enter2) ||
+			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
+					PPP_CHECK_CB(on_sys_copy_file_range_return)))) {
+			memcpy(ctx.args[0], &arg0, sizeof(int32_t));
+			memcpy(ctx.args[1], &arg1, sizeof(uint32_t));
+			memcpy(ctx.args[2], &arg2, sizeof(int32_t));
+			memcpy(ctx.args[3], &arg3, sizeof(uint32_t));
+			memcpy(ctx.args[4], &arg4, sizeof(uint32_t));
+			memcpy(ctx.args[5], &arg5, sizeof(uint32_t));
+		}
+		PPP_RUN_CB(on_sys_copy_file_range_enter, cpu, pc, arg0, arg1, arg2, arg3, arg4, arg5);
+	}; break;
+	// 392 long sys_preadv2 ['unsigned long fd', 'const struct iovec __user *vec', 'unsigned long vlen', 'unsigned long pos_l', 'unsigned long pos_h', 'int flags']
+	case 392: {
+		panda_noreturn = false;
+		uint32_t arg0 = get_32(cpu, 0);
+		uint32_t arg1 = get_32(cpu, 1);
+		uint32_t arg2 = get_32(cpu, 2);
+		uint32_t arg3 = get_32(cpu, 3);
+		uint32_t arg4 = get_32(cpu, 4);
+		int32_t arg5 = get_s32(cpu, 5);
+		if (PPP_CHECK_CB(on_all_sys_enter2) ||
+			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
+					PPP_CHECK_CB(on_sys_preadv2_return)))) {
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
+			memcpy(ctx.args[1], &arg1, sizeof(uint32_t));
+			memcpy(ctx.args[2], &arg2, sizeof(uint32_t));
+			memcpy(ctx.args[3], &arg3, sizeof(uint32_t));
+			memcpy(ctx.args[4], &arg4, sizeof(uint32_t));
+			memcpy(ctx.args[5], &arg5, sizeof(int32_t));
+		}
+		PPP_RUN_CB(on_sys_preadv2_enter, cpu, pc, arg0, arg1, arg2, arg3, arg4, arg5);
+	}; break;
+	// 393 long sys_pwritev2 ['unsigned long fd', 'const struct iovec __user *vec', 'unsigned long vlen', 'unsigned long pos_l', 'unsigned long pos_h', 'int flags']
+	case 393: {
+		panda_noreturn = false;
+		uint32_t arg0 = get_32(cpu, 0);
+		uint32_t arg1 = get_32(cpu, 1);
+		uint32_t arg2 = get_32(cpu, 2);
+		uint32_t arg3 = get_32(cpu, 3);
+		uint32_t arg4 = get_32(cpu, 4);
+		int32_t arg5 = get_s32(cpu, 5);
+		if (PPP_CHECK_CB(on_all_sys_enter2) ||
+			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
+					PPP_CHECK_CB(on_sys_pwritev2_return)))) {
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
+			memcpy(ctx.args[1], &arg1, sizeof(uint32_t));
+			memcpy(ctx.args[2], &arg2, sizeof(uint32_t));
+			memcpy(ctx.args[3], &arg3, sizeof(uint32_t));
+			memcpy(ctx.args[4], &arg4, sizeof(uint32_t));
+			memcpy(ctx.args[5], &arg5, sizeof(int32_t));
+		}
+		PPP_RUN_CB(on_sys_pwritev2_enter, cpu, pc, arg0, arg1, arg2, arg3, arg4, arg5);
+	}; break;
+	// 394 long sys_pkey_mprotect ['unsigned long start', 'size_t len', 'unsigned long prot', 'int pkey']
+	case 394: {
+		panda_noreturn = false;
+		uint32_t arg0 = get_32(cpu, 0);
+		uint32_t arg1 = get_32(cpu, 1);
+		uint32_t arg2 = get_32(cpu, 2);
+		int32_t arg3 = get_s32(cpu, 3);
+		if (PPP_CHECK_CB(on_all_sys_enter2) ||
+			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
+					PPP_CHECK_CB(on_sys_pkey_mprotect_return)))) {
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
+			memcpy(ctx.args[1], &arg1, sizeof(uint32_t));
+			memcpy(ctx.args[2], &arg2, sizeof(uint32_t));
+			memcpy(ctx.args[3], &arg3, sizeof(int32_t));
+		}
+		PPP_RUN_CB(on_sys_pkey_mprotect_enter, cpu, pc, arg0, arg1, arg2, arg3);
+	}; break;
+	// 395 long sys_pkey_alloc ['unsigned long flags', 'unsigned long init_val']
+	case 395: {
+		panda_noreturn = false;
+		uint32_t arg0 = get_32(cpu, 0);
+		uint32_t arg1 = get_32(cpu, 1);
+		if (PPP_CHECK_CB(on_all_sys_enter2) ||
+			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
+					PPP_CHECK_CB(on_sys_pkey_alloc_return)))) {
+			memcpy(ctx.args[0], &arg0, sizeof(uint32_t));
+			memcpy(ctx.args[1], &arg1, sizeof(uint32_t));
+		}
+		PPP_RUN_CB(on_sys_pkey_alloc_enter, cpu, pc, arg0, arg1);
+	}; break;
+	// 396 long sys_pkey_free ['int pkey']
+	case 396: {
+		panda_noreturn = false;
+		int32_t arg0 = get_s32(cpu, 0);
+		if (PPP_CHECK_CB(on_all_sys_enter2) ||
+			(!panda_noreturn && (PPP_CHECK_CB(on_all_sys_return2) ||
+					PPP_CHECK_CB(on_sys_pkey_free_return)))) {
+			memcpy(ctx.args[0], &arg0, sizeof(int32_t));
+		}
+		PPP_RUN_CB(on_sys_pkey_free_enter, cpu, pc, arg0);
 	}; break;
 	// 983041 long ARM_breakpoint ['void']
 	case 983041: {

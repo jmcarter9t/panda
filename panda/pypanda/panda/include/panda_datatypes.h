@@ -1070,6 +1070,11 @@ struct path_info {
 	int mnt_mountpoint_offset;
 };
 
+enum ARCHTYPE {
+    X86 = 0,
+    ARM
+};
+
 /**
  * @brief Wrapper for the structure-specific structs.
  */
@@ -1083,6 +1088,7 @@ struct kernelinfo {
 	struct fs_info fs;
 	struct qstr_info qstr;
 	struct path_info path;
+    int archtype;
 };
 
 

@@ -58,10 +58,13 @@ void registerExecPreCallback(void (*callback)(CPUState*, target_ulong));
 // Forward declarations
 int32_t get_s32_generic(CPUState *cpu, uint32_t argnum);
 int64_t get_s64_generic(CPUState *cpu, uint32_t argnum);
+
 int32_t get_return_s32_generic(CPUState *cpu, uint32_t argnum);
 int64_t get_return_s64_generic(CPUState *cpu, uint32_t argnum);
+
 target_long get_return_val_x86(CPUState *cpu);
 target_long get_return_val_arm(CPUState *cpu);
+
 uint32_t get_return_32_windows_x86(CPUState *cpu, uint32_t argnum);
 uint64_t get_return_64_windows_x86(CPUState *cpu, uint32_t argnum);
 uint64_t get_64_linux_x86(CPUState *cpu, uint32_t argnum);
@@ -85,9 +88,10 @@ enum ProfileType {
     PROFILE_WINDOWS_XPSP3_X86,
     PROFILE_WINDOWS_7_X86,
 	PROFILE_LINUX_X64,
-    PROFILE_LAST
+    PROFILE_LAST  // number of profiles
 };
 
+// Function pointer pack; this will be specific to each profile, e.g., linux arm.
 struct Profile {
     void         (*enter_switch)(CPUState *, target_ulong);
     void         (*return_switch)(CPUState *, target_ulong, const syscall_ctx_t *);
@@ -506,13 +510,14 @@ uint64_t get_return_64_windows_x86(CPUState *cpu, uint32_t argnum) {
     assert (false && "64-bit arguments not supported on Windows 7 x86");
 }
 
-// Wrappers
+// Wrappers : use these; they point to the right function.
 target_long get_return_val (CPUState *cpu) {
     return syscalls_profile->get_return_val(cpu);
 }
 target_ulong calc_retaddr (CPUState *cpu, target_ulong pc) {
     return syscalls_profile->calc_retaddr(cpu, pc);
 }
+
 uint32_t get_32(CPUState *cpu, uint32_t argnum) {
     return syscalls_profile->get_32(cpu, argnum);
 }
