@@ -46,7 +46,8 @@ import os
 CONFIG_LINUX = {
     'linux:x64:generic': {
         'bits': 64,
-        'src': os.path.expanduser('~/src/linux-4.14.55'),
+        'src': os.path.expanduser('/usr/src/linux-headers-4.15.0-88'),
+        # 'src': os.path.expanduser('~/src/linux-4.14.55'),
         'map_function_signature': {
             'parser': 'parse_signature_files',
             'locations': {

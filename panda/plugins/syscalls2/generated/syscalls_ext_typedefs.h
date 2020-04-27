@@ -25,7 +25,7 @@ target_ptr_t get_return_pointer(CPUState *env, uint32_t argnum);
  * @brief Maximum number of arguments for a system call across
  * all supported platforms.
  */
-#define GLOBAL_MAX_SYSCALL_ARGS 17
+#define GLOBAL_MAX_SYSCALL_ARGS 6
 
 /**
  * @brief Maximum size for a syscall argument across all supported platforms.

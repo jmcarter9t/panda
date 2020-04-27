@@ -1,0 +1,12 @@
+PWD := $(shell pwd)
+# SOURCEDIR=/home/x4j/workspace/kernel-builds/build/linux-4.9.99/source
+SOURCEDIR=/home/x4j/workspace/kernel-builds/build/linux-4.9.99
+XCOMPILER=arm-linux-gnueabi-
+
+obj-m += kernelinfo.o
+
+all:
+	make ARCH=arm CROSS_COMPILE=${XCOMPILER} -C ${SOURCEDIR} SUBDIRS=$(PWD) M=$(PWD) modules
+
+clean:
+	make ARCH=arm CROSS_COMPILE=${XCOMPILER} -C ${SOURCEDIR} SUBDIRS=$(PWD) SUBDIRS=$(PWD) M=$(PWD) clean

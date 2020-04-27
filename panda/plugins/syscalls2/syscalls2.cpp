@@ -81,13 +81,26 @@ target_ulong calc_retaddr_linux_x64(CPUState *cpu, target_ulong pc);
 target_ulong calc_retaddr_linux_arm(CPUState *cpu, target_ulong pc);
 
 enum ProfileType {
+
+#if defined(TARGET_I386)
     PROFILE_LINUX_X86,
+#endif
+
+#if defined(TARGET_ARM)
     PROFILE_LINUX_ARM,
+#endif
+
+#if defined(TARGET_I386)
     PROFILE_WINDOWS_2000_X86,
     PROFILE_WINDOWS_XPSP2_X86,
     PROFILE_WINDOWS_XPSP3_X86,
     PROFILE_WINDOWS_7_X86,
+#endif
+
+#if defined(TARGET_X86_64)
 	PROFILE_LINUX_X64,
+#endif
+
     PROFILE_LAST  // number of profiles
 };
 
@@ -111,6 +124,7 @@ struct Profile {
 };
 
 Profile profiles[PROFILE_LAST] = {
+#if defined(TARGET_I386)
     {
         .enter_switch = syscall_enter_switch_linux_x86,
         .return_switch = syscall_return_switch_linux_x86,
@@ -128,6 +142,9 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = -1,
         .syscall_interrupt_number = 0x80,
     },
+#endif
+
+#if defined(TARGET_ARM)
     {
         .enter_switch = syscall_enter_switch_linux_arm,
         .return_switch = syscall_return_switch_linux_arm,
@@ -145,6 +162,9 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = -1,
         .syscall_interrupt_number = 0x80,
     },
+#endif
+
+#if defined(TARGET_I386)
     {
         .enter_switch = syscall_enter_switch_windows_2000_x86,
         .return_switch = syscall_return_switch_windows_2000_x86,
@@ -166,6 +186,9 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = 0,
         .syscall_interrupt_number = 0x2E,
     },
+#endif
+
+#if defined(TARGET_I386)
     {
         .enter_switch = syscall_enter_switch_windows_xpsp2_x86,
         .return_switch = syscall_return_switch_windows_xpsp2_x86,
@@ -187,6 +210,9 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = 8,
         .syscall_interrupt_number = 0x80,
     },
+#endif
+
+#if defined(TARGET_I386)
     {
         .enter_switch = syscall_enter_switch_windows_xpsp3_x86,
         .return_switch = syscall_return_switch_windows_xpsp3_x86,
@@ -208,6 +234,9 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = 8,
         .syscall_interrupt_number = 0x80,
     },
+#endif
+
+#if defined(TARGET_I386)
     {
         .enter_switch = syscall_enter_switch_windows_7_x86,
         .return_switch = syscall_return_switch_windows_7_x86,
@@ -229,6 +258,9 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = 8,
         .syscall_interrupt_number = 0x80,
     },
+#endif
+
+#if defined(TARGET_X86_64)
     {
         .enter_switch = syscall_enter_switch_linux_x64,
         .return_switch = syscall_return_switch_linux_x64,
@@ -246,11 +278,10 @@ Profile profiles[PROFILE_LAST] = {
         .windows_arg_offset = -1,
         .syscall_interrupt_number = 0x80,
     }
+#endif
 };
 
 static Profile *syscalls_profile;
-
-
 
 // Reinterpret the ulong as a long. Arch and host specific.
 target_long get_return_val_x86(CPUState *cpu){
@@ -828,10 +859,13 @@ bool init_plugin(void *self) {
     panda_arg_list *plugin_args = panda_get_args(PLUGIN_NAME);
 
     panda_cb pcb;
+
     pcb.insn_translate = translate_callback;
     panda_register_callback(self, PANDA_CB_INSN_TRANSLATE, pcb);
+
     pcb.insn_exec = exec_callback;
     panda_register_callback(self, PANDA_CB_INSN_EXEC, pcb);
+
     pcb.before_block_exec = tb_check_syscall_return;
     panda_register_callback(self, PANDA_CB_BEFORE_BLOCK_EXEC, pcb);
 
