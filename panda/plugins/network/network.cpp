@@ -93,7 +93,7 @@ bool init_plugin(void *self) {
             /*idb_inf*/NULL,
 #if WIRESHARK_VERSION_MAJOR >= 2 && WIRESHARK_VERSION_MINOR >= 0 && WIRESHARK_VERSION_MICRO >= 0
             /*nrb_hdrs*/NULL,
-#endif
+	#endif
             /*err*/&err);
 #endif
 
@@ -104,7 +104,6 @@ bool init_plugin(void *self) {
 
     pcb.replay_handle_packet = handle_packet;
     panda_register_callback(self, PANDA_CB_REPLAY_HANDLE_PACKET, pcb);
-
     return true;
 }
 
@@ -131,7 +130,7 @@ void handle_packet(CPUState *env, uint8_t *buf, size_t size, uint8_t direction,
     gboolean ret = false;
 #if (WIRESHARK_VERSION_MAJOR >= 2 && WIRESHARK_VERSION_MINOR >= 6 && WIRESHARK_VERSION_MICRO >= 3) || (WIRESHARK_VERSION_MAJOR>=3)
     wtap_rec rec;
-    wtap_rec_init(&rec);
+    memset(&rec, 0, sizeof rec);
     rec.rec_type = REC_TYPE_PACKET;
     rec.ts.secs = now_tv.tv_sec;
     rec.ts.nsecs = now_tv.tv_usec * 1000;
@@ -140,16 +139,13 @@ void handle_packet(CPUState *env, uint8_t *buf, size_t size, uint8_t direction,
     rec.rec_header.packet_header.pkt_encap = WTAP_ENCAP_ETHERNET;
     rec.opt_comment = comment_buf;
     rec.has_comment_changed = true;
-
     ret = wtap_dump(
         /*wtap_dumper*/ plugin_log,
         /*wtap_rec*/ &rec,
         /*buf*/ buf,
         /*err*/ &err,
         /*err_info*/ &err_info);
-
-    wtap_rec_cleanup(&rec);
-#else
+    #else
     struct wtap_pkthdr header;
 #if WIRESHARK_VERSION_MAJOR >= 2 && WIRESHARK_VERSION_MINOR >= 0 && WIRESHARK_VERSION_MICRO >= 0
     wtap_phdr_init(&header);
@@ -168,7 +164,7 @@ void handle_packet(CPUState *env, uint8_t *buf, size_t size, uint8_t direction,
 #if WIRESHARK_VERSION_MAJOR >= 2 && WIRESHARK_VERSION_MINOR >= 0 && WIRESHARK_VERSION_MICRO >= 0
         ,
         /*err_info*/ &err_info
-#endif
+	#endif
     );
 #if WIRESHARK_VERSION_MAJOR >= 2 && WIRESHARK_VERSION_MINOR >= 0 && WIRESHARK_VERSION_MICRO >= 0
     wtap_phdr_cleanup(&header);
@@ -178,8 +174,9 @@ void handle_packet(CPUState *env, uint8_t *buf, size_t size, uint8_t direction,
       fprintf(stderr, "Plugin 'network': failed wtap_dump() with error %d", err);
 #if WIRESHARK_VERSION_MAJOR >= 2 && WIRESHARK_VERSION_MINOR >= 0 && WIRESHARK_VERSION_MICRO >= 0
       fprintf(stderr, " and error_info %s", err_info);
-#endif
+      #endif
       fprintf(stderr, "\n");
     }
     return;
 }
+
