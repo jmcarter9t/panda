@@ -31,6 +31,7 @@ mmio_trace
 hooks
 syscallinfo
 edge_coverage
+track_intexc
 unigrams
 # win2000x86intro
 # win7x86intro
