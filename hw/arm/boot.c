@@ -411,6 +411,7 @@ static int load_dtb(hwaddr addr, const struct arm_boot_info *binfo,
     unsigned int i;
     hwaddr mem_base, mem_len;
 
+    // file dtb will override the get_dtb function.
     if (binfo->dtb_filename) {
         char *filename;
         filename = qemu_find_file(QEMU_FILE_TYPE_BIOS, binfo->dtb_filename);
@@ -443,10 +444,10 @@ static int load_dtb(hwaddr addr, const struct arm_boot_info *binfo,
         return 0;
     }
 
-    acells = qemu_fdt_getprop_cell(fdt, "/", "#address-cells",
-                                   NULL, &error_fatal);
-    scells = qemu_fdt_getprop_cell(fdt, "/", "#size-cells",
-                                   NULL, &error_fatal);
+    // must exist in the DTB!
+    acells = qemu_fdt_getprop_cell(fdt, "/", "#address-cells", NULL, &error_fatal);
+    scells = qemu_fdt_getprop_cell(fdt, "/", "#size-cells", NULL, &error_fatal);
+
     if (acells == 0 || scells == 0) {
         fprintf(stderr, "dtb file invalid (#address-cells or #size-cells 0)\n");
         goto fail;
@@ -462,6 +463,8 @@ static int load_dtb(hwaddr addr, const struct arm_boot_info *binfo,
     }
 
     if (nb_numa_nodes > 0) {
+        // multiprocessors.
+        
         /*
          * Turn the /memory node created before into a NOP node, then create
          * /memory@addr nodes for all numa nodes respectively.
@@ -495,12 +498,13 @@ static int load_dtb(hwaddr addr, const struct arm_boot_info *binfo,
         }
 
         if (!qemu_fdt_getprop(fdt, "/memory", "device_type", NULL, &err)) {
+            // this field is always set to memory.
             qemu_fdt_setprop_string(fdt, "/memory", "device_type", "memory");
         }
 
-        rc = qemu_fdt_setprop_sized_cells(fdt, "/memory", "reg",
-                                          acells, binfo->loader_start,
-                                          scells, binfo->ram_size);
+        // IMPORTANT: this sets these fields no matter whether they were specified already or not...
+        rc = qemu_fdt_setprop_sized_cells(fdt, "/memory", "reg", acells, binfo->loader_start, scells, binfo->ram_size);
+
         if (rc < 0) {
             fprintf(stderr, "couldn't set /memory/reg\n");
             goto fail;
@@ -513,8 +517,9 @@ static int load_dtb(hwaddr addr, const struct arm_boot_info *binfo,
     }
 
     if (binfo->kernel_cmdline && *binfo->kernel_cmdline) {
-        rc = qemu_fdt_setprop_string(fdt, "/chosen", "bootargs",
-                                     binfo->kernel_cmdline);
+
+        rc = qemu_fdt_setprop_string(fdt, "/chosen", "bootargs", binfo->kernel_cmdline);
+
         if (rc < 0) {
             fprintf(stderr, "couldn't set /chosen/bootargs\n");
             goto fail;
@@ -522,8 +527,7 @@ static int load_dtb(hwaddr addr, const struct arm_boot_info *binfo,
     }
 
     if (binfo->initrd_size) {
-        rc = qemu_fdt_setprop_cell(fdt, "/chosen", "linux,initrd-start",
-                                   binfo->initrd_start);
+        rc = qemu_fdt_setprop_cell(fdt, "/chosen", "linux,initrd-start", binfo->initrd_start);
         if (rc < 0) {
             fprintf(stderr, "couldn't set /chosen/linux,initrd-start\n");
             goto fail;
@@ -781,8 +785,8 @@ static void arm_load_kernel_notify(Notifier *notifier, void *data)
     ArmLoadKernelNotifier *n = DO_UPCAST(ArmLoadKernelNotifier,
                                          notifier, notifier);
     ARMCPU *cpu = n->cpu;
-    struct arm_boot_info *info =
-        container_of(n, struct arm_boot_info, load_kernel_notifier);
+
+    struct arm_boot_info *info = container_of(n, struct arm_boot_info, load_kernel_notifier);
 
     /* The board code is not supposed to set secure_board_setup unless
      * running its code in secure mode is actually possible, and KVM
@@ -796,6 +800,8 @@ static void arm_load_kernel_notify(Notifier *notifier, void *data)
     if (!info->kernel_filename || info->firmware_loaded) {
 
         if (have_dtb(info)) {
+            // dtb filename specified or a board specific dtb exists.
+            
             /* If we have a device tree blob, but no kernel to supply it to (or
              * the kernel is supposed to be loaded by the bootloader), copy the
              * DTB to the base of RAM for the bootloader to pick up.

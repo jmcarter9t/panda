@@ -1216,6 +1216,8 @@ static void machvirt_init(MachineState *machine)
         cpu_model = "cortex-a15";
     }
 
+    error_report("Starting machvirt_init with cpu_model = %s", cpu_model);
+
     /* We can probe only here because during property set
      * KVM is not available yet
      */
